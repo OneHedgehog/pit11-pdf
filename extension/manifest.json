@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "PIT-11 Clean Download",
+  "version": "1.3.0",
+  "description": "Adds a Download PDF button on the e-PIT PIT-11 preview that saves a clean, A4-fitted PDF of the form.",
+  "content_scripts": [
+    {
+      "matches": ["https://epit.podatki.gov.pl/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

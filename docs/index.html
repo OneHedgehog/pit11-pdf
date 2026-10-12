@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PIT-11 PDF – pobierz PIT-11 z Twój e-PIT jako PDF</title>
+<meta name="description" content="Darmowe rozszerzenie Chrome: pobierz PIT-11 z Twój e-PIT jako czysty PDF jednym kliknięciem. Działa lokalnie, bez zbierania danych.">
+<meta property="og:title" content="PIT-11 PDF – pobierz PIT-11 z Twój e-PIT jako PDF">
+<meta property="og:description" content="Jedno kliknięcie, czysty PDF formatu A4. Bez uprawnień, bez wysyłania danych.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230052a5'/%3E%3Cpath d='M16 7v12m-5-5 5 5 5-5M9 24h14' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f4f7fb;
+    --text: #1d2733;
+    --muted: #5a6675;
+    --border: #dde3ea;
+    --accent: #0052a5;
+    --accent-hover: #3376ab;
+    --ok: #1a7f4b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11161c;
+      --surface: #1a212a;
+      --text: #e6ebf1;
+      --muted: #9aa7b6;
+      --border: #2a3440;
+      --accent: #4d8fd6;
+      --accent-hover: #6aa3e0;
+      --ok: #4cc38a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Open Sans", Arial, sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+  .brand { font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 28px; height: 28px; }
+  .lang { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .lang button {
+    border: 0; background: transparent; color: var(--muted); padding: 6px 12px;
+    font: 600 14px/1 inherit; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 32px 0 12px; }
+  h2 { font-size: 22px; margin: 48px 0 12px; }
+  p.lead { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px;
+    border-radius: 4px; font-weight: 700; text-decoration: none; border: 1px solid var(--accent);
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn.ghost { color: var(--accent); }
+  .note { font-size: 14px; color: var(--muted); }
+  .demo {
+    margin: 32px 0 0; padding: 24px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .demo .crumbs { font-size: 13px; color: var(--accent); }
+  .demo .title { font-size: 24px; font-weight: 700; margin: 4px 0 12px; }
+  .demo .back { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
+  .fake-btn {
+    display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 8px 16px;
+    background: #0052a5; color: #fff; border-radius: 4px; font-weight: 700;
+  }
+  .fake-btn svg { width: 20px; height: 20px; }
+  .tabs { display: flex; gap: 24px; margin-top: 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .tabs > span { padding: 8px 0; color: var(--muted); }
+  .tabs > span:first-child { color: var(--accent); font-weight: 700; border-bottom: 3px solid var(--accent); }
+  ol.steps { padding-left: 20px; }
+  ol.steps li { margin: 6px 0; }
+  ul.checks { list-style: none; padding: 0; }
+  ul.checks li { padding-left: 28px; position: relative; margin: 8px 0; }
+  ul.checks li::before { content: "✓"; position: absolute; left: 4px; color: var(--ok); font-weight: 700; }
+  details { border-top: 1px solid var(--border); padding: 12px 0; }
+  details:last-of-type { border-bottom: 1px solid var(--border); }
+  summary { cursor: pointer; font-weight: 600; }
+  code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 14px; }
+  footer { margin: 56px 0 32px; font-size: 13px; color: var(--muted); }
+  a { color: var(--accent); }
+  /* language switching: elements carry data-l="pl" or data-l="en" */
+  html[lang="pl"] [data-l="en"], html[lang="en"] [data-l="pl"] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#0052a5"/><path d="M16 7v12m-5-5 5 5 5-5M9 24h14" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    PIT-11 PDF
+  </div>
+  <div class="lang" role="group" aria-label="Language / Język">
+    <button type="button" data-set="pl" aria-pressed="true">PL</button>
+    <button type="button" data-set="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <h1>
+    <span data-l="pl">Pobierz PIT-11 z Twój e-PIT jako PDF</span>
+    <span data-l="en">Download your PIT-11 from Twój e-PIT as a PDF</span>
+  </h1>
+  <p class="lead">
+    <span data-l="pl">Darmowe rozszerzenie do Chrome, które dodaje przycisk <b>„Pobierz dokument”</b> do podglądu PIT-11 – tak jak przy PIT-37. Jedno kliknięcie i masz czysty, poprawnie złożony PDF w formacie A4.</span>
+    <span data-l="en">A free Chrome extension that adds a <b>“Download document”</b> button to the PIT-11 preview, just like the one on your PIT-37. One click gives you a clean, correctly laid-out A4 PDF.</span>
+  </p>
+  <div class="cta">
+    <a class="btn primary" href="#install">
+      <span data-l="pl">Zainstaluj w Chrome</span><span data-l="en">Add to Chrome</span>
+    </a>
+    <a class="btn ghost" href="https://github.com/USERNAME/pit11-pdf">
+      <span data-l="pl">Kod źródłowy na GitHub</span><span data-l="en">Source code on GitHub</span>
+    </a>
+  </div>
+  <p class="note">
+    <span data-l="pl">Bez uprawnień. Bez wysyłania danych. Wszystko dzieje się w Twojej przeglądarce.</span>
+    <span data-l="en">No permissions. No data sent anywhere. Everything happens in your browser.</span>
+  </p>
+
+  <div class="demo" aria-hidden="true">
+    <div class="crumbs"><span data-l="pl">Twoje dane źródłowe › PIT-11</span><span data-l="en">Your source data › PIT-11</span></div>
+    <div class="title"><span data-l="pl">Podgląd dokumentu</span><span data-l="en">Document preview</span></div>
+    <div class="back">← <span data-l="pl">Wróć</span><span data-l="en">Back</span></div>
+    <span class="fake-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 19h14" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-l="pl">Pobierz dokument</span><span data-l="en">Download document</span>
+    </span>
+    <div class="tabs">
+      <span><span data-l="pl">Podgląd</span><span data-l="en">Preview</span></span>
+      <span><span data-l="pl">Podgląd uproszczony</span><span data-l="en">Simplified preview</span></span>
+    </div>
+  </div>
+
+  <h2><span data-l="pl">Jaki problem rozwiązuje?</span><span data-l="en">What problem does it solve?</span></h2>
+  <p data-l="pl">Twój e-PIT pokazuje PIT-11 tylko w podglądzie – nie ma przycisku pobierania. Drukowanie strony przez przeglądarkę daje nachodzące na siebie sekcje, złe podziały stron i znikający pasek przewijania.</p>
+  <p data-l="en">Twój e-PIT only shows the PIT-11 as a preview – there is no download button. Printing the page from the browser gives overlapping sections, broken page breaks and a missing scrollbar.</p>
+  <ul class="checks">
+    <li data-l="pl">4 strony A4 z numeracją 1/4–4/4, bez nachodzących sekcji</li>
+    <li data-l="en">4 A4 pages numbered 1/4–4/4, no overlapping sections</li>
+    <li data-l="pl">Nazwa pliku uzupełniona automatycznie, np. <code>PIT-11_2025_ACME_SP</code></li>
+    <li data-l="en">File name filled in for you, e.g. <code>PIT-11_2025_ACME_SP</code></li>
+    <li data-l="pl">Działa dla każdego roku i każdego płatnika</li>
+    <li data-l="en">Works for every year and every payer</li>
+  </ul>
+
+  <h2 id="install"><span data-l="pl">Instalacja</span><span data-l="en">Install</span></h2>
+  <p class="note">
+    <span data-l="pl">Wkrótce w Chrome Web Store. Do tego czasu możesz zainstalować ręcznie:</span>
+    <span data-l="en">Coming soon to the Chrome Web Store. Until then you can install it manually:</span>
+  </p>
+  <ol class="steps" data-l="pl">
+    <li>Pobierz <a href="https://github.com/USERNAME/pit11-pdf/archive/refs/heads/main.zip">archiwum ZIP</a> i rozpakuj je.</li>
+    <li>Otwórz <code>chrome://extensions</code> i włącz <b>Tryb dewelopera</b>.</li>
+    <li>Kliknij <b>Załaduj rozpakowane</b> i wybierz folder <code>extension</code>.</li>
+  </ol>
+  <ol class="steps" data-l="en">
+    <li>Download the <a href="https://github.com/USERNAME/pit11-pdf/archive/refs/heads/main.zip">ZIP archive</a> and unpack it.</li>
+    <li>Open <code>chrome://extensions</code> and turn on <b>Developer mode</b>.</li>
+    <li>Click <b>Load unpacked</b> and select the <code>extension</code> folder.</li>
+  </ol>
+
+  <h2><span data-l="pl">Jak używać</span><span data-l="en">How to use</span></h2>
+  <ol class="steps" data-l="pl">
+    <li>Zaloguj się do <b>Twój e-PIT</b> i otwórz <b>Twoje dane źródłowe → PIT-11 → Podgląd</b>.</li>
+    <li>Kliknij <b>Pobierz dokument</b>.</li>
+    <li>W oknie drukowania wybierz <b>Zapisz jako PDF</b>, odznacz <b>Nagłówki i stopki</b> i kliknij <b>Zapisz</b>.</li>
+  </ol>
+  <ol class="steps" data-l="en">
+    <li>Log in to <b>Twój e-PIT</b> and open <b>Your source data → PIT-11 → Preview</b>.</li>
+    <li>Click <b>Download document</b>.</li>
+    <li>In the print dialog choose <b>Save as PDF</b>, untick <b>Headers and footers</b> and click <b>Save</b>.</li>
+  </ol>
+
+  <h2 id="privacy"><span data-l="pl">Prywatność</span><span data-l="en">Privacy</span></h2>
+  <div data-l="pl">
+    <p>Rozszerzenie nie zbiera, nie przechowuje i nie wysyła żadnych danych. Odczytuje formularz PIT-11 wyświetlony w Twojej przeglądarce, porządkuje go i otwiera okno drukowania – nic więcej.</p>
+    <ul class="checks">
+      <li>Działa tylko na <code>epit.podatki.gov.pl</code></li>
+      <li>Brak dodatkowych uprawnień, brak połączeń sieciowych, brak zdalnego kodu</li>
+      <li>Otwarty kod źródłowy – możesz go sprawdzić na GitHub</li>
+    </ul>
+  </div>
+  <div data-l="en">
+    <p>The extension does not collect, store or send any data. It reads the PIT-11 form shown in your browser, cleans it up and opens the print dialog – nothing else.</p>
+    <ul class="checks">
+      <li>Runs only on <code>epit.podatki.gov.pl</code></li>
+      <li>No extra permissions, no network requests, no remote code</li>
+      <li>Open source – you can review it on GitHub</li>
+    </ul>
+  </div>
+
+  <h2>FAQ</h2>
+  <details>
+    <summary><span data-l="pl">Czy to oficjalne narzędzie Ministerstwa Finansów?</span><span data-l="en">Is this an official Ministry of Finance tool?</span></summary>
+    <p data-l="pl">Nie. To niezależny projekt open source, niezwiązany z Ministerstwem Finansów ani Krajową Administracją Skarbową.</p>
+    <p data-l="en">No. It's an independent open-source project, not affiliated with the Ministry of Finance or the National Revenue Administration (KAS).</p>
+  </details>
+  <details>
+    <summary><span data-l="pl">Przycisk się nie pojawia</span><span data-l="en">The button doesn't appear</span></summary>
+    <p data-l="pl">Poczekaj, aż formularz się załaduje, lub odśwież stronę podglądu. Jeśli portal zmienił wygląd, zgłoś problem na GitHub.</p>
+    <p data-l="en">Wait for the form to load, or reload the preview page. If the portal has changed its layout, please open an issue on GitHub.</p>
+  </details>
+  <details>
+    <summary><span data-l="pl">Czy działa w Edge lub Firefox?</span><span data-l="en">Does it work in Edge or Firefox?</span></summary>
+    <p data-l="pl">W Edge tak (instalacja tak samo jak w Chrome). Wersja dla Firefox jest planowana.</p>
+    <p data-l="en">Edge, yes (install it the same way as in Chrome). A Firefox version is planned.</p>
+  </details>
+</main>
+
+<footer>
+  <p data-l="pl">Niezależny projekt, niezwiązany z Ministerstwem Finansów ani KAS. „Twój e-PIT” jest usługą Ministerstwa Finansów. Licencja MIT.</p>
+  <p data-l="en">Independent project, not affiliated with the Ministry of Finance or KAS. “Twój e-PIT” is a service of the Ministry of Finance. MIT licence.</p>
+</footer>
+
+</div>
+<script>
+(function () {
+  var META = {
+    pl: { title: 'PIT-11 PDF – pobierz PIT-11 z Twój e-PIT jako PDF',
+          desc: 'Darmowe rozszerzenie Chrome: pobierz PIT-11 z Twój e-PIT jako czysty PDF jednym kliknięciem. Działa lokalnie, bez zbierania danych.' },
+    en: { title: 'PIT-11 PDF – download your PIT-11 from Twój e-PIT as a PDF',
+          desc: 'Free Chrome extension: download your PIT-11 from Twój e-PIT as a clean PDF in one click. Runs locally, collects no data.' }
+  };
+  function set(lang) {
+    if (!META[lang]) lang = 'pl';
+    document.documentElement.lang = lang;
+    document.title = META[lang].title;
+    document.querySelector('meta[name="description"]').setAttribute('content', META[lang].desc);
+    document.querySelectorAll('.lang button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.set === lang));
+    });
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('lang'); } catch (e) {}
+  var fromUrl = (location.hash.match(/lang=(pl|en)/) || [])[1];
+  var fromBrowser = /^pl\b/i.test(navigator.language || '') ? 'pl' : 'en';
+  set(fromUrl || saved || fromBrowser);
+  document.querySelectorAll('.lang button').forEach(function (b) {
+    b.addEventListener('click', function () { set(b.dataset.set); });
+  });
+})();
+</script>
+</body>
+</html>
