@@ -1,6 +1,6 @@
 # PIT-11 PDF
 
-**[English](#english) · [Polski](#polski)** · Website: https://USERNAME.github.io/pit11-pdf/
+**[English](#english) · [Polski](#polski)** · Website: https://onehedgehog.github.io/pit11-pdf/
 
 ---
 
